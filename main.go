@@ -32,7 +32,7 @@ func main() {
 func setupRoutes(r *gin.Engine) {
 
 	r.POST("/device_details", SaveLongLink)
-	// r.GET("/:id", redirectHandler)
+	r.GET("/device_details/all", GetAllDevices)
 	r.NoRoute(func(c *gin.Context) {
 		c.JSON(404, gin.H{"code": "PAGE_NOT_FOUND", "message": "Page not found"})
 	})
@@ -56,6 +56,7 @@ func SaveLongLink(c *gin.Context) {
 	//reqBody.ValidUrl = validurl(reqBody.URL)
 
 	// Data[lastID] = reqBody
+	reqBody.TIME_STAMP = time.Now()
 	fmt.Println(reqBody)
 	res, err := DB.Exec(`INSERT INTO "device_details" ( "type", "browser", "browser_version", "time_stamp", "screen_resolution")
 	VALUES ( $1, $2, $3, $4, $5)`, reqBody.TYPE, reqBody.BROWSER, reqBody.BROWSER_VERSION, reqBody.TIME_STAMP, reqBody.SCREEN_RESOLUTION)
@@ -72,4 +73,30 @@ func SaveLongLink(c *gin.Context) {
 	fmt.Println("res: ", lastInsID)
 	c.JSON(http.StatusOK, reqBody)
 	c.Writer.Header().Set("Content-Type", "application/json")
+}
+
+// GET
+func GetAllDevices(c *gin.Context) {
+	rows, err := DB.Query("SELECT id, type, browser, browser_version, time_stamp, screen_resolution FROM device_details order by id desc")
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+	devices := []Device{}
+	for rows.Next() {
+		d := Device{}
+		err := rows.Scan(&d.ID, &d.TYPE, &d.BROWSER, &d.BROWSER_VERSION, &d.TIME_STAMP, &d.SCREEN_RESOLUTION)
+		if err != nil {
+			panic(err)
+		}
+		devices = append(devices, d)
+	}
+	err = rows.Err()
+	if err != nil {
+		panic(err)
+	}
+	res := gin.H{
+		"data": devices,
+	}
+	c.JSON(http.StatusOK, res)
 }
