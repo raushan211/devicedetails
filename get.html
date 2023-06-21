@@ -1,0 +1,59 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+<style>
+    th{ 
+        color:#fff;
+            }
+</style>
+
+
+<table class="table table-striped">
+    <tr  class="bg-info">
+        <th>ID</th>
+        <th>Type</th>
+		<th>Browser</th>
+		<th>Browser Version</th>
+		<th>Timestamp</th>
+		<th>Screen Resolution</th>      
+    </tr>
+
+    <tbody id="myTable">
+
+    </tbody>
+</table>
+
+<script>
+    var myArray = [
+    
+    ]
+
+    $.ajax({
+        method: 'GET',
+        url: 'http://localhost:8080/device_details/all',
+        success:function(response){
+            myArray = response
+            buildTable(myArray.data)
+            console.log(myArray)
+        }
+    })
+
+    function buildTable(data){
+        var table = document.getElementById('myTable')
+        
+        for (var i = 0; i < data.length; i++){ // edited
+            var row = `<tr>
+                            <td>${data[i].id}</td> 
+                            <td>${data[i].type}</td>
+							<td>${data[i].browser}</td>
+							<td>${data[i].browser_version}</td>                            
+							<td>${data[i].time_stamp}</td>
+							<td>${data[i].screen_resolution}</td>
+                       </tr>`
+            table.innerHTML += row
+            
+        }
+    }
+
+</script>
