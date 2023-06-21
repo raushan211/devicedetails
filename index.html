@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        
+    </style>
+    <script src="https://stacksnippets.net/scripts/snippet-javascript-console.min.js?v=1"></script>
+</head>
+<body>
+    <form id="myForm">
+    <br><label for="type"><b>Type</b></label>
+      <input type="text" placeholder="Enter Type" name="type" required></br>
+  
+      <br><label for="broswer"><b>Browser</b></label>
+      <input type="text" placeholder="Enter Browser" name="browser" required></br>
+  
+      <br><label for="broswer_version"><b>Browser_Version</b></label>
+      <input type="text" placeholder="Browser_Version" name="browser_version" required></br>
+
+      <br><label for="screen_resolution"><b>Screen_Resolution</b></label>
+      <input type="text" placeholder="Enter Screen_Resolution" name="screen_resolution" required></br>
+  
+      <br><input id="postSubmit" type="submit" value="Submit"></br>
+
+      
+</form>
+    <script type="text/javascript">
+        const thisForm = document.getElementById('myForm');
+thisForm.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const formData = new FormData(thisForm).entries()
+    const response = await fetch('http://localhost:8080/device_details', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.fromEntries(formData))
+    });
+
+    const result = await response.json();
+    console.log(result)
+});
+    </script>
+</body>
+</html>
+
+
+
+
+
+
